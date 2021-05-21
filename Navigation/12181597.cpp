@@ -177,6 +177,8 @@ public:
 
 			minFringe->status = 't';
 			treeNum++;
+			if (minFringe->num == destNum)
+				break;
 			cur = minFringe;
 			while (cur->next != NULL) {
 				if (areas[cur->next->num]->status != 't' && areas[cur->next->num]->flooded == 0) {
