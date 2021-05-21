@@ -142,8 +142,78 @@ public:
 			cout << treeNum << " " << areas[destNum]->distance << " " << 
 			areas[sourceNum]->name << " " << areas[destNum]->name << "\n";
 	}
-	void minRoute() { //최단경로 찾기
 
+	void minRoute(int sourceNum, int destNum) { //최단경로 찾기
+		int treeNum = 0; // tree set에 추가된 지역들의 수
+
+		// 출발지 또는 목적지가 침수되어 있으면 None
+		if (areas[sourceNum]->flooded == 1 || areas[destNum]->flooded == 1) {
+			cout << "None\n";
+			return;
+		}
+
+		// 모든 정점을 unseen으로 초기화
+		for (area* a : areasOnly) {
+			a->status = 'u'; //unseen
+			a->distance = 1000001;
+		}
+		// 시작 정점 찾아 status: tree, d(s,s) = 0 으로 만들기
+		area *s = areas[sourceNum];
+		s->status = 't';
+		treeNum++;
+		s->distance = 0;
+
+		// 시작 정점의 인접 정점 status: fringe로 만들기
+		area* cur = s;
+		while (cur->next != NULL) {
+			if (areas[cur->next->num]->flooded == 0) {
+				areas[cur->next->num]->status = 'f';
+				areas[cur->next->num]->distance = cur->nextRoad->distance;
+			}
+			cur = cur->next;
+		}
+		// areasOnly에 fringe가 존재하면 반복
+		while (1) {
+			// fringe 중 최소거리값을 갖는 정점 선택
+			int minDist = 1000002;
+			area* minFringe;
+			bool flag = false;
+			for (area* a : areasOnly) {
+				if (a->status == 'f') {
+					flag = true; //fringe가 있으면 true
+					if (a->distance < minDist) {
+						minDist = a->distance;
+						minFringe = a;
+					}
+				}
+			}
+			if (flag == false)	break;
+
+			minFringe->status = 't';
+			treeNum++;
+			if (minFringe->num == destNum)
+				break;
+			cur = minFringe;
+			while (cur->next != NULL) {
+				if (areas[cur->next->num]->status != 't' && areas[cur->next->num]->flooded == 0) {
+					areas[cur->next->num]->status = 'f';
+					// 작은 값으로 거리 업데이트
+					if (areas[cur->next->num]->distance > (minFringe->distance + cur->nextRoad->distance)) {
+						areas[cur->next->num]->distance = minFringe->distance + cur->nextRoad->distance;
+					}
+					//// 동일하면 지역번호가 작은 값으로
+					//else if (areas[cur->next->num]->distance == (minFringe->distance + cur->nextRoad->distance)) {
+
+					//}
+				}
+				cur = cur->next;
+			}
+		}
+		if (areas[destNum]->distance > 1000000)
+			cout << "None\n";
+		else
+			cout << treeNum << " " << areas[destNum]->distance << " " <<
+			areas[sourceNum]->name << " " << areas[destNum]->name << "\n";
 	}
 };
 
