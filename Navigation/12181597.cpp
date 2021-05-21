@@ -11,9 +11,7 @@ public:
 	int num; // 지역 번호
 	string name; // 지역 이름
 	bool flooded; // 침수 여부 (침수됨:1, 아님:0)
-	//area* prev;
 	area* next;
-	//road* prevRoad; // prev area와 현재 area를 연결하는 road
 	road* nextRoad; // next area와 현재 area를 연결하는 road
 	int distance;
 
@@ -22,10 +20,8 @@ public:
 		this->num = n;
 		this->name = na;
 		this->flooded = f;
-		//this->prev = NULL;
 		this->next = NULL;
 		this->nextRoad = NULL;
-		//this->status = 'u';
 		this->distance = 1000001;
 	}
 };
@@ -44,7 +40,6 @@ public:
 
 class graph {
 public:
-	//area* areas[900000] = { NULL, }; //이따 확인해보자. 다 null 차는지
 	vector<area*> areas; // 정점을 인덱스(지역번호)로 접근할 수 있는 벡터 (접근 쉽게 하려고)
 	vector<area*> areasOnly; // 실제 존재하는(null이 아닌) 정점만을 모아 놓은 벡터 (초기화 쉽게 하려고)
 	graph() {
@@ -53,19 +48,11 @@ public:
 
 	void insertArea(int num, string name, bool flooded) {
 		area* newNode = new area(num, name, flooded);
-		//areas[num] = newNode;
-		//areas.push_back(newNode);
 		areas[num] = newNode;
 		areasOnly.push_back(newNode);
 	}
 	void insertRoad(int num1, int num2, int d) {
 		road* newEdge = new road(num1, num2, d);
-		//area* temp1 = areas[num1];
-		//area* temp2 = areas[num2];
-		//areas[num1]->next = temp2;
-		//areas[num1]->nextRoad = newEdge;
-		//areas[num2]->next = temp1;
-		//areas[num2]->nextRoad = newEdge;
 
 		area *temp1 = new area(areas[num1]->num, areas[num1]->name, areas[num1]->flooded);
 		area *temp2 = new area(areas[num2]->num, areas[num2]->name, areas[num2]->flooded);
@@ -81,49 +68,6 @@ public:
 		}
 		cur->next = temp1;
 		cur->nextRoad = newEdge;
-
-		//area *temp1; area *temp2;
-		//int check = 0; // num1, num2 다 찾았는지 체크
-		//for (area* a : areas) { // area Node 복사하기
-		//	if (a->num == num1) {
-		//		temp1 = new area(a->num, a->name, a->flooded); // 정보 복사
-		//		check++;
-		//		if (check == 2)
-		//			break;
-		//	}
-		//	else if (a->num == num2) {
-		//		temp2 = new area(a->num, a->name, a->flooded);
-		//		check++;
-		//		if (check == 2)
-		//			break;
-		//	}
-		//}
-		//check = 0;
-		//for (area* a : areas) { // area Node & road 이어붙이기
-		//	if (a->num == num1) {
-		//		// Node 인접리스트의 맨 끝에 이어붙인다.
-		//		area* cur = a;
-		//		while (cur->next != NULL) {
-		//			cur = cur->next;
-		//		}
-		//		cur->next = temp2;
-		//		cur->nextRoad = newEdge;
-		//		check++;
-		//		if (check == 2)
-		//			break;
-		//	}
-		//	else if (a->num == num2) {
-		//		area* cur = a;
-		//		while (cur->next != NULL) {
-		//			cur = cur->next;
-		//		}
-		//		cur->next = temp1;
-		//		cur->nextRoad = newEdge;
-		//		check++;
-		//		if (check == 2)
-		//			break;
-		//	}
-		//}
 	}
 
 	void minDistance(int sourceNum, int destNum) { //최단거리 찾기
@@ -151,14 +95,11 @@ public:
 		while (cur->next != NULL) {
 			if (areas[cur->next->num]->flooded == 0) {
 				areas[cur->next->num]->status = 'f';
-				areas[cur->next->num]->distance = cur->nextRoad->distance; // 여기 다시 보기
-				//cur->next->status = 'f';
-				//cur->next->distance = cur->nextRoad->distance; // 여기 다시 보기
+				areas[cur->next->num]->distance = cur->nextRoad->distance;
 			}
 			cur = cur->next;
 		}
 		// areasOnly에 fringe가 존재하면 반복
-		//bool flag = true; //fringe가 없으면 false
 		while (1) {
 			// fringe 중 최소거리값을 갖는 정점 선택
 			int minDist = 1000002;
@@ -201,9 +142,6 @@ public:
 			cout << treeNum << " " << areas[destNum]->distance << " " << 
 			areas[sourceNum]->name << " " << areas[destNum]->name << "\n";
 	}
-	//void fringeExist() { // areasOnly 벡터에 fringe가 존재하는지 여부
-
-	//}
 	void minRoute() { //최단경로 찾기
 
 	}
