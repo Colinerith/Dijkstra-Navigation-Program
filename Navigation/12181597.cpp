@@ -14,6 +14,7 @@ public:
 	area* next;
 	road* nextRoad; // next area와 현재 area를 연결하는 road
 	int distance;
+	int predecessor; // 경로 추적이 필요할 때, 누구에 의해 업데이트됐는지 표시.
 
 	char status; // u:unseen, f:fringe, t:tree
 	area(int n, string na, bool f) {
@@ -23,6 +24,7 @@ public:
 		this->next = NULL;
 		this->nextRoad = NULL;
 		this->distance = 1000001;
+		this->predecessor = -1;
 	}
 };
 
@@ -108,7 +110,8 @@ public:
 			for (area* a : areasOnly) {
 				if (a->status == 'f') {
 					flag = true; //fringe가 있으면 true
-					if (a->distance < minDist) {
+					// 작거나 동일하면 지역번호가 작은 값으로
+					if ((a->distance < minDist) || ((a->distance == minDist) && (a->num < minFringe->num))) {
 						minDist = a->distance;
 						minFringe = a;
 					}
@@ -169,6 +172,7 @@ public:
 			if (areas[cur->next->num]->flooded == 0) {
 				areas[cur->next->num]->status = 'f';
 				areas[cur->next->num]->distance = cur->nextRoad->distance;
+				areas[cur->next->num]->predecessor = s->num;
 			}
 			cur = cur->next;
 		}
@@ -181,7 +185,8 @@ public:
 			for (area* a : areasOnly) {
 				if (a->status == 'f') {
 					flag = true; //fringe가 있으면 true
-					if (a->distance < minDist) {
+					// 작거나 동일하면 지역번호가 작은 값으로
+					if ((a->distance < minDist) || ((a->distance == minDist) && (a->num < minFringe->num))) {
 						minDist = a->distance;
 						minFringe = a;
 					}
@@ -197,23 +202,38 @@ public:
 			while (cur->next != NULL) {
 				if (areas[cur->next->num]->status != 't' && areas[cur->next->num]->flooded == 0) {
 					areas[cur->next->num]->status = 'f';
-					// 작은 값으로 거리 업데이트
+					// 작은 값으로 거리 업데이트 & 누구에 의해 업데이트 되었는지
 					if (areas[cur->next->num]->distance > (minFringe->distance + cur->nextRoad->distance)) {
 						areas[cur->next->num]->distance = minFringe->distance + cur->nextRoad->distance;
+						areas[cur->next->num]->predecessor = minFringe->num;
 					}
-					//// 동일하면 지역번호가 작은 값으로
-					//else if (areas[cur->next->num]->distance == (minFringe->distance + cur->nextRoad->distance)) {
-
-					//}
+					// 동일하면 지역번호가 작은 값으로
+					else if (areas[cur->next->num]->distance == (minFringe->distance + cur->nextRoad->distance)) {
+						if (minFringe->num < areas[cur->next->num]->predecessor) { // 새 지역번호가 기존것보다 작으면
+							areas[cur->next->num]->predecessor = minFringe->num;
+						}
+					}
 				}
 				cur = cur->next;
 			}
 		}
 		if (areas[destNum]->distance > 1000000)
 			cout << "None\n";
-		else
-			cout << treeNum << " " << areas[destNum]->distance << " " <<
-			areas[sourceNum]->name << " " << areas[destNum]->name << "\n";
+		else {
+			cout << treeNum << " " << sourceNum;
+			int cur = destNum;
+			vector<int> route;
+			while (cur != sourceNum) {
+				route.push_back(cur);
+				cur = areas[cur]->predecessor;
+			}
+
+			while (!route.empty()) {
+				cout << " " << route.back();
+				route.pop_back();
+			}
+			cout << "\n";
+		}
 	}
 };
 
@@ -237,7 +257,7 @@ int main() {
 			g.minDistance(areaNum1, areaNum2);
 		}
 		else { // 'B'
-
+			g.minRoute(areaNum1, areaNum2);
 		}
 	}
 }
