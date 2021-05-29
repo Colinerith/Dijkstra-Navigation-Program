@@ -8,13 +8,13 @@ class road;
 
 class area {
 public:
-	int num; // Áö¿ª ¹øÈ£
-	string name; // Áö¿ª ÀÌ¸§
-	bool flooded; // Ä§¼ö ¿©ºÎ (Ä§¼öµÊ:1, ¾Æ´Ô:0)
+	int num; // ì§€ì—­ ë²ˆí˜¸
+	string name; // ì§€ì—­ ì´ë¦„
+	bool flooded; // ì¹¨ìˆ˜ ì—¬ë¶€ (ì¹¨ìˆ˜ë¨:1, ì•„ë‹˜:0)
 	area* next;
-	road* nextRoad; // next area¿Í ÇöÀç area¸¦ ¿¬°áÇÏ´Â road
+	road* nextRoad; // next areaì™€ í˜„ì¬ areaë¥¼ ì—°ê²°í•˜ëŠ” road
 	int distance;
-	int predecessor; // °æ·Î ÃßÀûÀÌ ÇÊ¿äÇÒ ¶§, ´©±¸¿¡ ÀÇÇØ ¾÷µ¥ÀÌÆ®µÆ´ÂÁö Ç¥½Ã.
+	int predecessor; // ê²½ë¡œ ì¶”ì ì´ í•„ìš”í•  ë•Œ, ëˆ„êµ¬ì— ì˜í•´ ì—…ë°ì´íŠ¸ëëŠ”ì§€ í‘œì‹œ.
 
 	char status; // u:unseen, f:fringe, t:tree
 	area(int n, string na, bool f) {
@@ -30,9 +30,9 @@ public:
 
 class road {
 public:
-	int area1; // Áö¿ª¹øÈ£ 1
-	int area2; // Áö¿ª¹øÈ£ 2
-	int distance; // µµ·ÎÀÇ °Å¸®
+	int area1; // ì§€ì—­ë²ˆí˜¸ 1
+	int area2; // ì§€ì—­ë²ˆí˜¸ 2
+	int distance; // ë„ë¡œì˜ ê±°ë¦¬
 	road(int n1, int n2, int di) {
 		this->area1 = n1;
 		this->area2 = n2;
@@ -42,8 +42,8 @@ public:
 
 class graph {
 public:
-	vector<area*> areas; // Á¤Á¡À» ÀÎµ¦½º(Áö¿ª¹øÈ£)·Î Á¢±ÙÇÒ ¼ö ÀÖ´Â º¤ÅÍ (Á¢±Ù ½±°Ô ÇÏ·Á°í)
-	vector<area*> areasOnly; // ½ÇÁ¦ Á¸ÀçÇÏ´Â(nullÀÌ ¾Æ´Ñ) Á¤Á¡¸¸À» ¸ğ¾Æ ³õÀº º¤ÅÍ (ÃÊ±âÈ­ ½±°Ô ÇÏ·Á°í)
+	vector<area*> areas; // ì •ì ì„ ì¸ë±ìŠ¤(ì§€ì—­ë²ˆí˜¸)ë¡œ ì ‘ê·¼í•  ìˆ˜ ìˆëŠ” ë²¡í„° (ì ‘ê·¼ ì‰½ê²Œ í•˜ë ¤ê³ )
+	vector<area*> areasOnly; // ì‹¤ì œ ì¡´ì¬í•˜ëŠ”(nullì´ ì•„ë‹Œ) ì •ì ë§Œì„ ëª¨ì•„ ë†“ì€ ë²¡í„° (ì´ˆê¸°í™” ì‰½ê²Œ í•˜ë ¤ê³ )
 	graph() {
 		areas.assign(1000000, NULL);
 	}
@@ -72,27 +72,27 @@ public:
 		cur->nextRoad = newEdge;
 	}
 
-	void minDistance(int sourceNum, int destNum) { //ÃÖ´Ü°Å¸® Ã£±â
-		int treeNum = 0; // tree set¿¡ Ãß°¡µÈ Áö¿ªµéÀÇ ¼ö
+	void minDistance(int sourceNum, int destNum) { //ìµœë‹¨ê±°ë¦¬ ì°¾ê¸°
+		int treeNum = 0; // tree setì— ì¶”ê°€ëœ ì§€ì—­ë“¤ì˜ ìˆ˜
 
-		// Ãâ¹ßÁö ¶Ç´Â ¸ñÀûÁö°¡ Ä§¼öµÇ¾î ÀÖÀ¸¸é None
+		// ì¶œë°œì§€ ë˜ëŠ” ëª©ì ì§€ê°€ ì¹¨ìˆ˜ë˜ì–´ ìˆìœ¼ë©´ None
 		if (areas[sourceNum]->flooded == 1 || areas[destNum]->flooded == 1) {
 			cout << "None\n";
 			return;
 		}
 
-		// ¸ğµç Á¤Á¡À» unseenÀ¸·Î ÃÊ±âÈ­
+		// ëª¨ë“  ì •ì ì„ unseenìœ¼ë¡œ ì´ˆê¸°í™”
 		for (area* a : areasOnly) {
 			a->status = 'u'; //unseen
 			a->distance = 1000001;
 		}
-		// ½ÃÀÛ Á¤Á¡ Ã£¾Æ status: tree, d(s,s) = 0 À¸·Î ¸¸µé±â
+		// ì‹œì‘ ì •ì  ì°¾ì•„ status: tree, d(s,s) = 0 ìœ¼ë¡œ ë§Œë“¤ê¸°
 		area *s = areas[sourceNum];
 		s->status = 't';
 		treeNum++;
 		s->distance = 0;
 
-		// ½ÃÀÛ Á¤Á¡ÀÇ ÀÎÁ¢ Á¤Á¡ status: fringe·Î ¸¸µé±â
+		// ì‹œì‘ ì •ì ì˜ ì¸ì ‘ ì •ì  status: fringeë¡œ ë§Œë“¤ê¸°
 		area* cur = s;
 		while (cur->next != NULL) {
 			if (areas[cur->next->num]->flooded == 0) {
@@ -101,16 +101,16 @@ public:
 			}
 			cur = cur->next;
 		}
-		// areasOnly¿¡ fringe°¡ Á¸ÀçÇÏ¸é ¹İº¹
+		// areasOnlyì— fringeê°€ ì¡´ì¬í•˜ë©´ ë°˜ë³µ
 		while (1) {
-			// fringe Áß ÃÖ¼Ò°Å¸®°ªÀ» °®´Â Á¤Á¡ ¼±ÅÃ
+			// fringe ì¤‘ ìµœì†Œê±°ë¦¬ê°’ì„ ê°–ëŠ” ì •ì  ì„ íƒ
 			int minDist = 1000002;
 			area* minFringe;
 			bool flag = false;
 			for (area* a : areasOnly) {
 				if (a->status == 'f') {
-					flag = true; //fringe°¡ ÀÖÀ¸¸é true
-					// ÀÛ°Å³ª µ¿ÀÏÇÏ¸é Áö¿ª¹øÈ£°¡ ÀÛÀº °ªÀ¸·Î
+					flag = true; //fringeê°€ ìˆìœ¼ë©´ true
+					// ì‘ê±°ë‚˜ ë™ì¼í•˜ë©´ ì§€ì—­ë²ˆí˜¸ê°€ ì‘ì€ ê°’ìœ¼ë¡œ
 					if ((a->distance < minDist) || ((a->distance == minDist) && (a->num < minFringe->num))) {
 						minDist = a->distance;
 						minFringe = a;
@@ -127,11 +127,11 @@ public:
 			while (cur->next != NULL) {
 				if (areas[cur->next->num]->status != 't' && areas[cur->next->num]->flooded == 0) {
 					areas[cur->next->num]->status = 'f';
-					// ÀÛÀº °ªÀ¸·Î °Å¸® ¾÷µ¥ÀÌÆ®
+					// ì‘ì€ ê°’ìœ¼ë¡œ ê±°ë¦¬ ì—…ë°ì´íŠ¸
 					if (areas[cur->next->num]->distance > (minFringe->distance + cur->nextRoad->distance)) {
 						areas[cur->next->num]->distance = minFringe->distance + cur->nextRoad->distance;
 					}
-					//// µ¿ÀÏÇÏ¸é Áö¿ª¹øÈ£°¡ ÀÛÀº °ªÀ¸·Î
+					//// ë™ì¼í•˜ë©´ ì§€ì—­ë²ˆí˜¸ê°€ ì‘ì€ ê°’ìœ¼ë¡œ
 					//else if (areas[cur->next->num]->distance == (minFringe->distance + cur->nextRoad->distance)) {
 
 					//}
@@ -146,27 +146,27 @@ public:
 			areas[sourceNum]->name << " " << areas[destNum]->name << "\n";
 	}
 
-	void minRoute(int sourceNum, int destNum) { //ÃÖ´Ü°æ·Î Ã£±â
-		int treeNum = 0; // tree set¿¡ Ãß°¡µÈ Áö¿ªµéÀÇ ¼ö
+	void minRoute(int sourceNum, int destNum) { //ìµœë‹¨ê²½ë¡œ ì°¾ê¸°
+		int treeNum = 0; // tree setì— ì¶”ê°€ëœ ì§€ì—­ë“¤ì˜ ìˆ˜
 
-		// Ãâ¹ßÁö ¶Ç´Â ¸ñÀûÁö°¡ Ä§¼öµÇ¾î ÀÖÀ¸¸é None
+		// ì¶œë°œì§€ ë˜ëŠ” ëª©ì ì§€ê°€ ì¹¨ìˆ˜ë˜ì–´ ìˆìœ¼ë©´ None
 		if (areas[sourceNum]->flooded == 1 || areas[destNum]->flooded == 1) {
 			cout << "None\n";
 			return;
 		}
 
-		// ¸ğµç Á¤Á¡À» unseenÀ¸·Î ÃÊ±âÈ­
+		// ëª¨ë“  ì •ì ì„ unseenìœ¼ë¡œ ì´ˆê¸°í™”
 		for (area* a : areasOnly) {
 			a->status = 'u'; //unseen
 			a->distance = 1000001;
 		}
-		// ½ÃÀÛ Á¤Á¡ Ã£¾Æ status: tree, d(s,s) = 0 À¸·Î ¸¸µé±â
+		// ì‹œì‘ ì •ì  ì°¾ì•„ status: tree, d(s,s) = 0 ìœ¼ë¡œ ë§Œë“¤ê¸°
 		area *s = areas[sourceNum];
 		s->status = 't';
 		treeNum++;
 		s->distance = 0;
 
-		// ½ÃÀÛ Á¤Á¡ÀÇ ÀÎÁ¢ Á¤Á¡ status: fringe·Î ¸¸µé±â
+		// ì‹œì‘ ì •ì ì˜ ì¸ì ‘ ì •ì  status: fringeë¡œ ë§Œë“¤ê¸°
 		area* cur = s;
 		while (cur->next != NULL) {
 			if (areas[cur->next->num]->flooded == 0) {
@@ -176,16 +176,16 @@ public:
 			}
 			cur = cur->next;
 		}
-		// areasOnly¿¡ fringe°¡ Á¸ÀçÇÏ¸é ¹İº¹
+		// areasOnlyì— fringeê°€ ì¡´ì¬í•˜ë©´ ë°˜ë³µ
 		while (1) {
-			// fringe Áß ÃÖ¼Ò°Å¸®°ªÀ» °®´Â Á¤Á¡ ¼±ÅÃ
+			// fringe ì¤‘ ìµœì†Œê±°ë¦¬ê°’ì„ ê°–ëŠ” ì •ì  ì„ íƒ
 			int minDist = 1000002;
 			area* minFringe;
 			bool flag = false;
 			for (area* a : areasOnly) {
 				if (a->status == 'f') {
-					flag = true; //fringe°¡ ÀÖÀ¸¸é true
-					// ÀÛ°Å³ª µ¿ÀÏÇÏ¸é Áö¿ª¹øÈ£°¡ ÀÛÀº °ªÀ¸·Î
+					flag = true; //fringeê°€ ìˆìœ¼ë©´ true
+					// ì‘ê±°ë‚˜ ë™ì¼í•˜ë©´ ì§€ì—­ë²ˆí˜¸ê°€ ì‘ì€ ê°’ìœ¼ë¡œ
 					if ((a->distance < minDist) || ((a->distance == minDist) && (a->num < minFringe->num))) {
 						minDist = a->distance;
 						minFringe = a;
@@ -202,14 +202,14 @@ public:
 			while (cur->next != NULL) {
 				if (areas[cur->next->num]->status != 't' && areas[cur->next->num]->flooded == 0) {
 					areas[cur->next->num]->status = 'f';
-					// ÀÛÀº °ªÀ¸·Î °Å¸® ¾÷µ¥ÀÌÆ® & ´©±¸¿¡ ÀÇÇØ ¾÷µ¥ÀÌÆ® µÇ¾ú´ÂÁö
+					// ì‘ì€ ê°’ìœ¼ë¡œ ê±°ë¦¬ ì—…ë°ì´íŠ¸ & ëˆ„êµ¬ì— ì˜í•´ ì—…ë°ì´íŠ¸ ë˜ì—ˆëŠ”ì§€
 					if (areas[cur->next->num]->distance > (minFringe->distance + cur->nextRoad->distance)) {
 						areas[cur->next->num]->distance = minFringe->distance + cur->nextRoad->distance;
 						areas[cur->next->num]->predecessor = minFringe->num;
 					}
-					// µ¿ÀÏÇÏ¸é Áö¿ª¹øÈ£°¡ ÀÛÀº °ªÀ¸·Î
+					// ë™ì¼í•˜ë©´ ì§€ì—­ë²ˆí˜¸ê°€ ì‘ì€ ê°’ìœ¼ë¡œ
 					else if (areas[cur->next->num]->distance == (minFringe->distance + cur->nextRoad->distance)) {
-						if (minFringe->num < areas[cur->next->num]->predecessor) { // »õ Áö¿ª¹øÈ£°¡ ±âÁ¸°Íº¸´Ù ÀÛÀ¸¸é
+						if (minFringe->num < areas[cur->next->num]->predecessor) { // ìƒˆ ì§€ì—­ë²ˆí˜¸ê°€ ê¸°ì¡´ê²ƒë³´ë‹¤ ì‘ìœ¼ë©´
 							areas[cur->next->num]->predecessor = minFringe->num;
 						}
 					}
