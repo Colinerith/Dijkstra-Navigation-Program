@@ -44,14 +44,6 @@ void minDist(int sourceNum, int destNum) {
 		if (curNum == destNum) // 도착 노드가 tree 됐다면 종료
 			break;
 
-		//int next, nextDistance;
-		//for (pair<int, int> road : roads[curNum]) { // 연결된 지역들 탐색
-		//	next = road.first;
-		//	nextDistance = road.second + distance;
-		//	if (nextDistance < distances[next]) { // 거리 갱신
-		//		distances[next] = nextDistance;
-		//		fringeQ.push({ next, nextDistance });}
-		//}
 		int next, nextDistance;
 		for (int i = 0; i < roads[curNum].size(); i++) { // 연결된 지역들 탐색
 			next = roads[curNum][i].first; // 연결된 지역 번호
